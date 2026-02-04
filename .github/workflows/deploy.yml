@@ -47,6 +47,9 @@ jobs:
     needs: post-deploy-test-staging
     environment: production   # 👈 manual approval gate here
     steps:   
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Verify PR approval
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # 👈 provide auth for gh CLI         
