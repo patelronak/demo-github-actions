@@ -1,9 +1,8 @@
 name: Any Branch CI/CD with Approval
 
 on:
-  push:
-    branches:
-      - "**"
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
