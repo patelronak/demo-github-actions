@@ -45,8 +45,27 @@ jobs:
   deploy-production:
     runs-on: ubuntu-latest
     needs: post-deploy-test-staging
-    if: github.event.pull_request && github.event.pull_request.review_decision == 'approved'
-    environment: production   # 👈 approval gate here
+    environment: production   # 👈 manual approval gate here
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+  
+      - name: Verify PR approval
+        # exit 78 marks the job as neutral/skipped instead of failing
+        run: |
+          # Ensure PR number is provided as input to workflow_dispatch or from context
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          echo "Checking PR #$PR_NUMBER approval status..."
+  
+          # Query PR review status using GitHub CLI
+          PR_STATUS=$(gh pr view $PR_NUMBER --json reviewDecision -q .reviewDecision)
+  
+          if [ "$PR_STATUS" != "APPROVED" ]; then
+            echo "❌ PR #$PR_NUMBER has not been approved yet."
+            echo "Please wait for reviewer approval and re-run this job."
+            exit 78
+          fi
+  
       - name: Deploy to production
-        run: echo "deploy to production"
+        run: |
+          echo "✅ PR approved. Deploying PR #${{ github.event.pull_request.number }} to production..."
