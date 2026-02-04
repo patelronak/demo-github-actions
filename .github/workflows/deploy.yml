@@ -46,11 +46,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: post-deploy-test-staging
     environment: production   # 👈 manual approval gate here
-    steps:
+    steps:  
       - name: Checkout code
         uses: actions/checkout@v4
   
       - name: Verify PR approval
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # 👈 provide auth for gh CLI         
         # exit 78 marks the job as neutral/skipped instead of failing
         run: |
           # Ensure PR number is provided as input to workflow_dispatch or from context
