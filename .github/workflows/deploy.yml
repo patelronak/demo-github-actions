@@ -17,7 +17,15 @@ jobs:
     steps:
       - name: Test
         run: echo "test"
-
+        
+  db-migration-staging:
+    runs-on: ubuntu-latest
+    needs: test
+    environment: staging
+    steps:
+      - name: Run DB Migration
+        run: echo "Run DB Migration to staging"
+        
   deploy-staging:
     runs-on: ubuntu-latest
     needs: test
@@ -25,6 +33,14 @@ jobs:
     steps:
       - name: Deploy to staging
         run: echo "deploy to staging"
+
+  post-deploy-test-staging:
+    runs-on: ubuntu-latest
+    needs: test
+    environment: staging
+    steps:
+      - name: Integration tests for staging
+        run: echo "Integration tests for staging"        
 
   deploy-production:
     runs-on: ubuntu-latest
